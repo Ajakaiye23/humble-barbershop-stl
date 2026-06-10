@@ -146,6 +146,46 @@ footer .logo{display:block;margin-bottom:.6rem}
   </div>
 </div></header>
 
+<style>
+.story{position:relative;height:560vh;background:#0f1929;padding:0}
+.story-pin{position:sticky;top:0;height:100vh;overflow:hidden}
+#hbStoryCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.story-veil{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at 70% 50%,transparent 34%,rgba(6,12,22,.7) 100%)}
+.story-wrap{position:absolute;inset:0;z-index:3;display:flex;align-items:center}
+.story-wrap .inner{max-width:1180px;margin:0 auto;padding:0 2.4rem;width:100%;position:relative}
+.sbeat{position:absolute;max-width:560px;opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.sbeat.in{opacity:1;transform:none}
+.sbeat .bk{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:4px;text-transform:uppercase;color:#c9a24a;margin-bottom:.7rem}
+.sbeat h2{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(2.8rem,6.5vw,5.5rem);line-height:.95;color:#f3ece0;letter-spacing:1px}
+.sbeat h2 span{color:#c9a24a}
+.sbeat p{font-family:'Playfair Display',serif;font-style:italic;font-size:1.15rem;color:rgba(243,236,224,.82);margin-top:1rem;line-height:1.6;max-width:430px}
+.sbrail{position:absolute;left:2.2rem;top:50%;transform:translateY(-50%);z-index:4;display:flex;flex-direction:column;gap:13px}
+.sbrail i{width:8px;height:8px;border-radius:50%;background:rgba(243,236,224,.25);transition:all .3s;display:block}
+.sbrail i.on{background:#c9a24a;transform:scale(1.4)}
+@media(max-width:860px){
+  .story{height:auto}
+  .story-pin{position:relative;height:auto;overflow:visible}
+  #hbStoryCanvas{position:relative;width:100%;height:58vh;background:radial-gradient(circle at 50% 42%,#1a2c46,#0c1424)}
+  .story-veil,.sbrail{display:none}
+  .story-wrap{position:relative;display:block}
+  .story-wrap .inner{padding:2.4rem 1.6rem}
+  .sbeat{position:relative;opacity:1;transform:none;max-width:none;padding:1.5rem 0;border-top:1px solid rgba(201,162,74,.2)}
+}
+</style>
+<section class="story" id="story">
+  <div class="story-pin">
+    <canvas id="hbStoryCanvas"></canvas>
+    <div class="story-veil"></div>
+    <div class="sbrail"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <div class="story-wrap"><div class="inner">
+      <div class="sbeat in"><div class="bk">The Chair &middot; 01</div><h2>Pull up a <span>chair.</span></h2><p>The shop on Clark Street &mdash; old-school, unhurried, and built around getting it right.</p></div>
+      <div class="sbeat"><div class="bk">The Chair &middot; 02</div><h2>We talk it <span>through.</span></h2><p>Before a single snip, we figure out exactly the look you're after.</p></div>
+      <div class="sbeat"><div class="bk">The Chair &middot; 03</div><h2>The <span>cut.</span></h2><p>Scissor-over-comb, clean and deliberate. No rushing the work that shows.</p></div>
+      <div class="sbeat"><div class="bk">The Chair &middot; 04</div><h2>The <span>line-up.</span></h2><p>Razor-sharp edges and a crisp neckline &mdash; the detail people actually notice.</p></div>
+      <div class="sbeat"><div class="bk">The Chair &middot; 05</div><h2>Walk out <span>sharp.</span></h2><p>Hot-towel finish, dialed and fresh. Then we do it again next time.</p></div>
+    </div></div>
+  </div>
+</section>
 <section id="menu"><div class="wrap">
   <div class="head"><div class="k">The Cuts</div><h2>Clean Work, Fair Prices</h2></div>
   <div class="menu">
@@ -269,6 +309,66 @@ footer .logo{display:block;margin-bottom:.6rem}
 <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+window.addEventListener('load',function(){
+  if(!window.THREE)return;
+  var canvas=document.getElementById('hbStoryCanvas');if(!canvas)return;
+  var isMobile=window.matchMedia('(max-width:860px)').matches;
+  try{var _t=document.createElement('canvas');if(!(_t.getContext('webgl')||_t.getContext('experimental-webgl')))return;}catch(e){return;}
+  function size(){return {w:canvas.clientWidth||canvas.offsetWidth||800,h:canvas.clientHeight||canvas.offsetHeight||600};}
+  var d=size();
+  var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:!isMobile});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.3:2));renderer.setSize(d.w,d.h,false);renderer.setClearColor(0x0f1929,1);
+  if('outputColorSpace' in renderer)renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+  var scene=new THREE.Scene();scene.fog=new THREE.Fog(0x0f1929,14,40);
+  var cam=new THREE.PerspectiveCamera(42,d.w/d.h,0.1,140);
+  (function(){var c=document.createElement('canvas');c.width=32;c.height=256;var g=c.getContext('2d');var gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,'#9aa6b6');gr.addColorStop(0.45,'#1a2336');gr.addColorStop(0.5,'#c6d0de');gr.addColorStop(0.55,'#141b2a');gr.addColorStop(1,'#0a0f18');g.fillStyle=gr;g.fillRect(0,0,32,256);g.fillStyle='rgba(201,162,74,0.6)';g.fillRect(0,120,32,12);var tex=new THREE.CanvasTexture(c);tex.mapping=THREE.EquirectangularReflectionMapping;var pm=new THREE.PMREMGenerator(renderer);pm.compileEquirectangularShader();scene.environment=pm.fromEquirectangular(tex).texture;tex.dispose();pm.dispose();})();
+  var key=new THREE.DirectionalLight(0xfff0d8,1.5);key.position.set(-6,9,7);scene.add(key);
+  var fill=new THREE.DirectionalLight(0x6f9bd6,0.6);fill.position.set(8,-2,5);scene.add(fill);
+  var brassPt=new THREE.PointLight(0xc9a24a,1.4,60);brassPt.position.set(3,2,6);scene.add(brassPt);
+  scene.add(new THREE.AmbientLight(0x2a3650,0.6));
+  // barber pole striped texture (diagonal red/navy on cream)
+  var sc=document.createElement('canvas');sc.width=128;sc.height=128;var sg=sc.getContext('2d');
+  sg.fillStyle='#f3ece0';sg.fillRect(0,0,128,128);sg.save();sg.translate(64,64);sg.rotate(Math.PI/4);sg.translate(-160,-160);
+  for(var i=0;i<320;i+=42){sg.fillStyle=((i/42)|0)%2?'#a8332f':'#16243a';sg.fillRect(i,0,21,320);}sg.restore();
+  var stripeTex=new THREE.CanvasTexture(sc);stripeTex.wrapS=stripeTex.wrapT=THREE.RepeatWrapping;stripeTex.repeat.set(3,4);
+  var pole=new THREE.Group();
+  var cyl=new THREE.Mesh(new THREE.CylinderGeometry(0.72,0.72,5.2,48),new THREE.MeshStandardMaterial({map:stripeTex,roughness:0.38,metalness:0.12,envMapIntensity:1.1}));cyl.castShadow=true;pole.add(cyl);
+  var glass=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.8,5.25,48,1,true),new THREE.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:0.13,roughness:0.04,metalness:0.0,envMapIntensity:2.2,side:THREE.DoubleSide}));pole.add(glass);
+  var chrome=new THREE.MeshStandardMaterial({color:0xcdd6e0,metalness:0.98,roughness:0.12,envMapIntensity:2.2});
+  var brass=new THREE.MeshStandardMaterial({color:0xc9a24a,metalness:0.92,roughness:0.28,envMapIntensity:1.9,emissive:0x231a06,emissiveIntensity:0.2});
+  var capT=new THREE.Mesh(new THREE.CylinderGeometry(0.86,0.86,0.5,40),chrome);capT.position.y=2.85;pole.add(capT);
+  var capB=new THREE.Mesh(new THREE.CylinderGeometry(0.86,0.86,0.5,40),chrome);capB.position.y=-2.85;pole.add(capB);
+  var finial=new THREE.Mesh(new THREE.SphereGeometry(0.5,24,18),brass);finial.position.y=3.35;pole.add(finial);
+  var base=new THREE.Mesh(new THREE.CylinderGeometry(0.7,1.0,0.7,40),brass);base.position.y=-3.4;pole.add(base);
+  pole.rotation.z=0.05;scene.add(pole);
+  function ss(a,b,x){x=(x-a)/(b-a);x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function applyCam(p){var ang=-0.7+p*1.7;var cz=lerp(6.5,11,ss(0,1,p));var cy=lerp(-0.5,2.4,ss(0,1,p));cam.position.set(Math.sin(ang)*cz,cy,Math.cos(ang)*cz);cam.lookAt(0,0.2,0);}
+  var prog=0;
+  if(window.gsap&&window.ScrollTrigger&&!isMobile){
+    gsap.registerPlugin(ScrollTrigger);
+    var dots=document.querySelectorAll('.sbrail i'),beats=document.querySelectorAll('.sbeat');
+    ScrollTrigger.create({trigger:'.story',start:'top top',end:'bottom bottom',pin:'.story-pin',scrub:0.6,anticipatePin:1,invalidateOnRefresh:true,
+      onUpdate:function(self){prog=self.progress;var idx=Math.min(4,Math.floor(self.progress*5));
+        beats.forEach(function(b,i){b.classList.toggle('in',i===idx);});
+        dots.forEach(function(dt,i){dt.classList.toggle('on',i===idx);});}});
+    setTimeout(function(){ScrollTrigger.refresh();},500);
+  }
+  var vis=true;if('IntersectionObserver' in window)new IntersectionObserver(function(e){vis=e[0].isIntersecting;},{threshold:0.01}).observe(canvas);
+  var t0=performance.now();
+  function render(){requestAnimationFrame(render);if(!vis)return;
+    var tt=(performance.now()-t0)/1000;var p=prog;if(isMobile){p=((tt)%15)/15;}
+    stripeTex.offset.y=tt*(0.12+p*0.18);
+    pole.rotation.y=tt*0.25;
+    brassPt.intensity=1.1+ss(0.8,1,p)*1.4;
+    applyCam(p);renderer.render(scene,cam);}
+  addEventListener('resize',function(){var z=size();renderer.setSize(z.w,z.h,false);cam.aspect=z.w/z.h;cam.updateProjectionMatrix();},{passive:true});
+  render();
+});
+</script>
+
 <script>
 window.addEventListener('load',function(){
   var hasG=window.gsap&&window.ScrollTrigger;
